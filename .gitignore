@@ -1,0 +1,5 @@
+.env
+__pycache__
+py_log.log
+.DS_Store
+ hpora.py
