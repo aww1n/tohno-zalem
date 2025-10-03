@@ -5,6 +5,7 @@ from keyboards import *
 from message import *
 from db import db_users, sink_db_users
 from filtres import *
+from pprint import pprint
 router = Router()
 
 @router.message(Command("start"))
@@ -16,7 +17,12 @@ async def cmd_start(message):
 
 @router.message(F.text == "Категории активностей")    
 async def category_mennu(message):
+    cat = "*Вот ваши категории:* \n \n"
     await message.answer("Выберите, что вы хотите сделать",reply_markup = category_menu_keys)
+    prom_slovar = await db_users.find_one(filter={'id': message.from_user.id})
+    for i in prom_slovar['categories']:
+        cat += f"`{i['category_name']}`\n"
+    await message.answer(cat,parse_mode="Markdown")
 
 
 @router.message(F.text == "Добавить категорию")    
@@ -45,17 +51,19 @@ async def add_category(message):
 async def wait_category(message):
     await message.answer("Какие категории вы хотите удалить?")
     await db_users.update_one(filter={'id': message.from_user.id},update={'$set':{'state': 'wait delete category'}})
+    
 
 
 
 
 @router.message(is_delet_category_user)
 async def add_category(message):
-    print("jjfng")
     prom_slovar = await db_users.find_one(filter={'id': message.from_user.id})
-
-    print(type(prom_slovar['categories']))
-
+    for i in prom_slovar['categories']:
+        if message.text == i['category_name']:
+            prom_slovar['categories'].remove(i)
+    await db_users.update_one(filter={'id': message.from_user.id},update={'$set':{'categories': prom_slovar['categories'],'state': ""}})
+    
 
 
 
