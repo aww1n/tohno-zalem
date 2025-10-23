@@ -9,11 +9,10 @@ main_menu_keys = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=[
 
 
 category_menu_keys = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=[
-    [KeyboardButton(text='Добавить категорию')],
-    [KeyboardButton(text='Удалить категорию')],
+    [KeyboardButton(text='Добавить категорию'),KeyboardButton(text='Удалить категорию')],
+    [KeyboardButton(text='Удалить подкатегорию'),KeyboardButton(text='Добавить подкатегорию')],
     [KeyboardButton(text='Главное меню')]
 ])
-
 
 statistics_menu_keys = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=[
     [KeyboardButton(text='За период')],
