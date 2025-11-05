@@ -8,13 +8,16 @@ from filtres import *
 from pprint import pprint
 categories_router = Router()
 
+#//////////////////////////////////////////////////////////////////////////////////
+#добавление
+
 @categories_router.message(F.text == "Добавить категорию")    
-async def wait_category(message):
+async def wait_new_category(message):
     await message.answer("Введите название категории для добавления")
     await db_users.update_one(filter={'id': message.from_user.id},update={'$set':{'state': 'wait new category'}})
 
 
-@categories_router.message(is_wait_category_user)
+@categories_router.message(is_wait_new_category_user)
 async def add_category(message):
     categ = {
         'category_name': message.text,
@@ -28,20 +31,17 @@ async def add_category(message):
     await db_users.update_one(filter={'id': message.from_user.id},update={'$set':{'state': ''}})
 
 
-
-
+#//////////////////////////////////////////////////////////////////////////////////
+#удаление
 
 @categories_router.message(F.text == "Удалить категорию")    
-async def wait_category(message):
+async def wait_delete_category(message):
     await message.answer("Какие категории вы хотите удалить?")
     await db_users.update_one(filter={'id': message.from_user.id},update={'$set':{'state': 'wait delete category'}})
     
 
-
-
-
-@categories_router.message(is_delet_category_user)
-async def add_category(message):
+@categories_router.message(is_delete_category_user)
+async def delete_category(message):
     cat = "*Вот ваши категории:* \n \n"
     prom_slovar = await db_users.find_one(filter={'id': message.from_user.id})
     for i in prom_slovar['categories']:

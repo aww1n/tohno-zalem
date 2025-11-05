@@ -12,76 +12,71 @@ subcategories_router = Router()
 
 
 @subcategories_router.message(F.text == "Добавить подкатегорию")    
-async def wait_category(message):
+async def wait_new_subcategory(message):
     prom_slovar = await db_users.find_one(filter={'id': message.from_user.id})
     cat = "*Вот ваши категории, введите в какую категорию вы хотите добавить:* \n \n"
     for i in prom_slovar['categories']:
         cat += f"`{i['category_name']}`\n"
     await message.answer(cat,parse_mode="Markdown")
-    await db_users.update_one(filter={'id': message.from_user.id},update={'$set':{'state': 'wait category_to_subcategiry'}})
+    await db_users.update_one(filter={'id': message.from_user.id},update={'$set':{'state': 'wait category for new subcategory'}})
     
 
-
-
-
-@subcategories_router.message(is_category_to_subcategory_user)
-async def add_category(message):
+@subcategories_router.message(is_wait_category_for_new_subcategory_user)
+async def add_subcategory(message):
     prom_slovar = await db_users.find_one(filter={'categories': message.text})
     await message.answer("Введите название подкатегории:")
-    await db_users.update_one(filter={'id': message.from_user.id},update={'$set':{'state': 'wait subcategory','temp': message.text}})
+    await db_users.update_one(filter={'id': message.from_user.id},update={'$set':{'state': 'wait new subcategory','temp': message.text}})
     print(prom_slovar)
 
 
 
-@subcategories_router.message(is_subcategory_user)
+@subcategories_router.message(is_wait_new_subcategory_user)
 async def add_subcategory(message):
     subcategory = {
         "name":message.text,
         "data": []
     }
-    categor = await db_users.find_one(filter={'id': message.from_user.id})
-    await db_users.update_one(filter={'id': message.from_user.id,'categories.category_name': categor['temp']},update={'$push':{'categories.$.subcategories': subcategory}})
+    user = await db_users.find_one(filter={'id': message.from_user.id})
+    await db_users.update_one(filter={'id': message.from_user.id,'categories.category_name': user['temp']},update={'$push':{'categories.$.subcategories': subcategory}})
     await db_users.update_one(filter={'id': message.from_user.id},update={'$set':{'state': '','temp': ""}})
     
 
 
-
-
-
-
+#/////////////////////////////////////////////////////////////////////////////////
 
 
 @subcategories_router.message(F.text == "Удалить подкатегорию")    
-async def wait_category(message):
+async def wait_delete_subcategory(message):
     prom_slovar = await db_users.find_one(filter={'id': message.from_user.id})
     cat = "*Вот ваши категории, введите в какую категорию вы хотите добавить:* \n \n"
     for i in prom_slovar['categories']:
         cat += f"`{i['category_name']}`\n"
     await message.answer(cat,parse_mode="Markdown")
-    await db_users.update_one(filter={'id': message.from_user.id},update={'$set':{'state': 'wait category_to_subcategiry'}})
+    await db_users.update_one(filter={'id': message.from_user.id},update={'$set':{'state': 'wait category for delete subcategory'}})
     
 
 
 
 
-@subcategories_router.message(is_category_to_subcategory_user)
-async def add_category(message):
+@subcategories_router.message(is_wait_category_for_delete_subcategory_user)
+async def delete_subcategory(message):
     prom_slovar = await db_users.find_one(filter={'categories': message.text})
     await message.answer("Введите название подкатегории:")
-    await db_users.update_one(filter={'id': message.from_user.id},update={'$set':{'state': 'wait subcategory','temp': message.text}})
-    print(prom_slovar)
+    await db_users.update_one(filter={'id': message.from_user.id},update={'$set':{'state': 'wait delete subcategory','temp': message.text}})
 
 
 
-@subcategories_router.message(is_subcategory_user)
-async def add_subcategory(message):
-    subcategory = {
-        "name":message.text,
-        "data": []
-    }
-    categor = await db_users.find_one(filter={'id': message.from_user.id})
-    await db_users.update_one(filter={'id': message.from_user.id,'categories.category_name': categor['temp']},update={'$push':{'categories.$.subcategories': subcategory}})
-    await db_users.update_one(filter={'id': message.from_user.id},update={'$set':{'state': '','temp': ""}})
+#NE DODELANO
+
+# @subcategories_router.message(is_subcategory_user)
+# async def add_subcategory(message):
+#     subcategory = {
+#         "name":message.text,
+#         "data": []
+#     }
+#     user = await db_users.find_one(filter={'id': message.from_user.id})
+#     await db_users.update_one(filter={'id': message.from_user.id,'categories.category_name': user['temp']},update={'$push':{'categories.$.subcategories': subcategory}})
+#     await db_users.update_one(filter={'id': message.from_user.id},update={'$set':{'state': '','temp': ""}})
     
 
     
