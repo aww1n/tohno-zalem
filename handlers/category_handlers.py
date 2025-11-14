@@ -26,7 +26,10 @@ async def add_category(message):
     current_user = await db_users.find_one({"id": message.from_user.id})
 
     current_user['categories'].append(categ)
-    print(current_user['categories'])
+    cat = "*Вот ваши категории:* \n \n"
+    for i in current_user['categories']:
+        cat += f"`{i['category_name']}`\n"
+    await message.answer(cat,parse_mode="Markdown")
     await db_users.update_one(filter={'id': message.from_user.id},update={'$set':{'categories': list(current_user['categories'])}})
     await db_users.update_one(filter={'id': message.from_user.id},update={'$set':{'state': ''}})
 

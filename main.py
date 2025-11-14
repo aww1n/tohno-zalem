@@ -12,6 +12,8 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from handlers.subcategory_handlers import subcategories_router
 from handlers.handlers import router
 from handlers.category_handlers import categories_router
+from handlers.category_handlers import *
+from handlers.activity_handlers import activite_router
 client = AsyncIOMotorClient('localhost',port = 27017)
 db = client['activite_bot']
 db_users = db['users']
@@ -27,6 +29,7 @@ async def main():
     dispatcher.include_router(router)
     dispatcher.include_router(subcategories_router)
     dispatcher.include_router(categories_router)
+    dispatcher.include_router(activite_router)
     await dispatcher.start_polling(bot)
 
 
